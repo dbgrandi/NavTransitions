@@ -10,28 +10,41 @@ import Foundation
 import UIKit
 
 class Animator: NSObject, UIViewControllerAnimatedTransitioning {
-    
+
     var operation: UINavigationControllerOperation = .None
-    
+
+    /**
+     * When the transition is not interactive, set the animation to 0.3 seconds.
+     */
     func transitionDuration(transitionContext: UIViewControllerContextTransitioning!) -> NSTimeInterval {
         return 0.3
     }
-    
+
+    /**
+     * This sets up a non-interactive animation for either a push or a pop.
+     * If this is being used in an interactive animation, the calling function
+     * will immediately set the CALayer.speed to 0 on both the to and from
+     * viewControllers, then controls the animation by manipulating the
+     * CALayer.timeOffset. In this example, the timeOffset is controlled via
+     * a UIPercentDrivenInteractiveTransition.
+     *
+     * See http://johansorensen.com/articles/pausing%20and%20controlling%20the%20speed%20of%20Core%20Animation.html
+     *
+     */
     func animateTransition(transitionContext: UIViewControllerContextTransitioning!) {
         let toViewController =
             transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
         let fromViewController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)
+
+        // Pull our custom navController to fade in/out the navButton
         let dbgNav = toViewController.navigationController as DBGNavigationController
-        let leftButton = dbgNav.leftButton
         
         switch operation {
         case .Pop:
-            println("Pop")
-            println("navController number of views = \(dbgNav.viewControllers.count)")
             transitionContext.containerView().insertSubview(toViewController.view, belowSubview: fromViewController.view)
             fromViewController.view.transform = CGAffineTransformMakeTranslation(0, 0)
 
-            anchorToTop(toViewController.view)
+            moveAnchorToTopCenter(toViewController.view)
             toViewController.view.transform = CGAffineTransformMakeScale(0.9, 0.98)
             toViewController.view.alpha = 0.5
 
@@ -41,13 +54,13 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
                 toViewController.view.alpha = 1
 
                 if dbgNav.viewControllers.count == 1 && !dbgNav.isInteractiveTransition {
-                    leftButton.alpha = 0
+                    dbgNav.leftButton.alpha = 0
                 }
             }
 
             let completion = { (finished: Bool) -> Void in
                 if finished {
-                    self.anchorToCenter(toViewController.view)
+                    self.moveAnchorToCenterFromTopCenter(toViewController.view)
                 }
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
@@ -55,10 +68,9 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
             UIView.animateWithDuration(self.transitionDuration(transitionContext), animations: animations, completion: completion)
         case .Push:
             println("Push")
-            println("navController number of views = \(dbgNav.viewControllers.count)")
             transitionContext.containerView().addSubview(toViewController.view)
             
-            anchorToTop(fromViewController.view)
+            moveAnchorToTopCenter(fromViewController.view)
             
             toViewController.view.transform = CGAffineTransformMakeTranslation(toViewController.view.bounds.size.width, 0)
             
@@ -68,13 +80,13 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
                 fromViewController.view.alpha = 0.5
                 
                 if dbgNav.viewControllers.count == 2 && !dbgNav.isInteractiveTransition{
-                    leftButton.alpha = 1
+                    dbgNav.leftButton.alpha = 1
                 }
             }
             
             let completion = { (finished: Bool) -> Void in
                 if finished {
-                    self.anchorToCenter(fromViewController.view)
+                    self.moveAnchorToCenterFromTopCenter(fromViewController.view)
                 }
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
             }
@@ -86,7 +98,12 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
         }
     }
     
-    func anchorToTop(view: UIView) {
+    /*
+     * This moves the anchor point to the top center of a view. It also
+     * translates the position so that the view doesn't jump when we move
+     * the anchor.
+     */
+    func moveAnchorToTopCenter(view: UIView) {
         view.transform = CGAffineTransformIdentity
         let frame = view.frame
         let topCenter = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMinY(frame))
@@ -94,17 +111,20 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
         view.layer.position = topCenter;
     }
     
-    // This ASSUMES that the current anchorPoint is top center
-    func anchorToCenter(view: UIView) {
-        if view.layer.anchorPoint.y != 0 {
-            return
+    /**
+     * This will reset the anchor back to the center to keep things sensible.
+     * It REQUIRES that the current anchorPoint is top center (e.g. 0.5, 0.0)
+     * otherwise it will not anchor the view to (0.5, 0.5)
+     */
+    func moveAnchorToCenterFromTopCenter(view: UIView) {
+        let anchorPoint = view.layer.anchorPoint
+        if anchorPoint.x == 0.5 && anchorPoint.y == 0 {
+            view.transform = CGAffineTransformIdentity
+            let frame = view.frame
+            let bottomCenter = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
+            view.layer.anchorPoint = CGPointMake(0.5, 0.5);
+            view.layer.position = bottomCenter;
         }
-        
-        view.transform = CGAffineTransformIdentity
-        let frame = view.frame
-        let bottomCenter = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
-        view.layer.anchorPoint = CGPointMake(0.5, 0.5);
-        view.layer.position = bottomCenter;
     }
 
 }

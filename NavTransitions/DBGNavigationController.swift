@@ -10,11 +10,31 @@ import UIKit
 
 class DBGNavigationController: UINavigationController, UINavigationControllerDelegate {
 
+    /**
+     * Boolean for tracking when we are in an interactive transition. This is
+     * needed to allow for the alpha of the back button to be animated
+     * properly.
+     */
     var isInteractiveTransition = false
     
+    /**
+     * The back button that is in the top left corner of the navigation view.
+     * This will be hidden when viewing the root of the nav controller stack.
+     */
     let leftButton: UIButton
-    
+
+    /**
+     * Animator that handles the basic transition animation. This is also
+     * used when it is an interactive transition by setting the speed of the
+     * animation to 0 and manipulating time based on the percent driven
+     * transition.
+     */
     let animator: Animator?
+    
+    /**
+     * Interaction controller that is hooked up to the Pan Gesture
+     * recognizer.
+     */
     var interactionController: UIPercentDrivenInteractiveTransition?
     
     convenience init() {
@@ -24,7 +44,7 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
     init(nibName: String!, bundle: NSBundle!) {
         leftButton = UIButton.buttonWithType(.Custom) as UIButton
         animator = Animator()
-        
+
         // use designated initializer on UINavigationController
         super.init(nibName: nibName, bundle: nibBundle)
 
@@ -45,19 +65,17 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
         leftButton.setBackgroundImage(UIImage(named: "NavButtonBG"), forState: .Normal)
         leftButton.setImage(UIImage(named: "BackArrow-Normal"), forState: .Normal)
         leftButton.setImage(UIImage(named: "BackArrow-Selected"), forState: (.Highlighted | .Selected) )
+        
         leftButton.addTarget(self, action: "backButtonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         leftButton.alpha = 0
         
-        // set width height of back button to 40
-        // set back button to be 20px from top left
-        
+        view.addSubview(leftButton)
+
         let views = ["leftButton": leftButton]
         let metrics = ["topMargin":30, "leftMargin":20, "size":40]
-        
-        view.addSubview(leftButton)
-        
         let horizontal = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(leftMargin)-[leftButton(size)]", options:nil, metrics: metrics, views: views)
         let vertical = NSLayoutConstraint.constraintsWithVisualFormat("V:|-(topMargin)-[leftButton(size)]", options:nil, metrics: metrics, views: views)
+
         view.addConstraints(horizontal)
         view.addConstraints(vertical)
     }
@@ -83,11 +101,14 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
 
     // MARK: - Pan Gesture Recognizer
 
+    /**
+     * Use the pan gesture to manage popping the navigation stack to the
+     * previous UIViewController. 
+     */
     func pan(recognizer: UIScreenEdgePanGestureRecognizer) {
         switch recognizer.state {
         case .Began:
             if viewControllers.count > 1 {
-                // set interactive switch here
                 isInteractiveTransition = true
                 interactionController = UIPercentDrivenInteractiveTransition()
                 popViewControllerAnimated(true)
@@ -113,12 +134,10 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
                     UIView.animateWithDuration(0.1, animations: {() -> Void in self.leftButton.alpha = 1 })
                 }
             }
-            // unset interactive switch here
             isInteractiveTransition = false
-
             interactionController = nil
         case _:
-            NSLog("ignore")
+            NSLog("ignore in this simple example")
         }
     }
 }

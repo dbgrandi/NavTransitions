@@ -11,11 +11,11 @@ import UIKit
 class DBGViewController: UIViewController {
 
     override func viewDidLoad() {
-        let contrastingColor = UIColor.randomColor()
-        self.view.backgroundColor = contrastingColor
+        self.view.backgroundColor = UIColor.randomColor()
         
         let tapRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tap:")
         self.view.addGestureRecognizer(tapRecognizer)
+
         super.viewDidLoad()
     }
     
