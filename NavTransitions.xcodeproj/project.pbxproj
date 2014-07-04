@@ -104,9 +104,9 @@
 				555878A9194D1C9000E46E75 /* AppDelegate.swift */,
 				55DFB7A61952176200A3D3F6 /* DBGNavigationController.swift */,
 				555878C1194D1CB300E46E75 /* DBGViewController.swift */,
-				555878C7194E5CE100E46E75 /* UIColor+RandomColor.swift */,
 				555878AB194D1C9000E46E75 /* Images.xcassets */,
 				555878A7194D1C9000E46E75 /* Supporting Files */,
+				555878C7194E5CE100E46E75 /* UIColor+RandomColor.swift */,
 			);
 			path = NavTransitions;
 			sourceTree = "<group>";
