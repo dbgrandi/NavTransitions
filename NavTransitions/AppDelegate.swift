@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
-        navController = DBGNavigationController()
-        navController!.viewControllers = [DBGViewController()]
+        self.navController = DBGNavigationController()
+        self.navController!.viewControllers = [DBGViewController()]
 
         self.window!.rootViewController = navController
 
