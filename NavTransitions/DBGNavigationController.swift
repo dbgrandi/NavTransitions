@@ -87,7 +87,7 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
     // MARK: - UINavigationControllerDelegate
     
     func navigationController(navigationController: UINavigationController!, interactionControllerForAnimationController animationController: UIViewControllerAnimatedTransitioning!) -> UIViewControllerInteractiveTransitioning! {
-        return (interactionController? ? interactionController! : nil)
+        return (interactionController? ? interactionController : nil)
     }
     
     func navigationController(navigationController: UINavigationController!, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController!, toViewController toVC: UIViewController!) -> UIViewControllerAnimatedTransitioning! {
