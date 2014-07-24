@@ -116,10 +116,12 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
         case .Changed:
             if let interaction = interactionController {
                 let translation = recognizer.translationInView(view)
-                let d = fabsf(translation.x / CGRectGetWidth(view.bounds))
-                interaction.updateInteractiveTransition(d)
+                let width = CGRectGetWidth(view.bounds)
+                let x = translation.x
+                let d = fabsf( Float(x) / Float(width) )
+                interaction.updateInteractiveTransition(CGFloat(d))
                 if viewControllers.count == 1 {
-                    leftButton.alpha = (1 - d)
+                    leftButton.alpha = CGFloat(1 - d)
                 }
             }
         case .Ended:
