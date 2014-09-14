@@ -37,11 +37,11 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
      */
     var interactionController: UIPercentDrivenInteractiveTransition?
     
-    convenience init() {
+    convenience override init() {
         self.init(nibName: nil, bundle: nil)
     }
 
-    init(nibName: String!, bundle: NSBundle!) {
+    override init(nibName: String!, bundle: NSBundle!) {
         leftButton = UIButton.buttonWithType(.Custom) as UIButton
         animator = Animator()
 
@@ -59,7 +59,11 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
         
         configLeftButton()
     }
-    
+
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     func configLeftButton() {
         leftButton.setTranslatesAutoresizingMaskIntoConstraints(false)
         leftButton.setBackgroundImage(UIImage(named: "NavButtonBG"), forState: .Normal)
@@ -87,7 +91,7 @@ class DBGNavigationController: UINavigationController, UINavigationControllerDel
     // MARK: - UINavigationControllerDelegate
     
     func navigationController(navigationController: UINavigationController!, interactionControllerForAnimationController animationController: UIViewControllerAnimatedTransitioning!) -> UIViewControllerInteractiveTransitioning! {
-        return (interactionController? ? interactionController : nil)
+        return interactionController?
     }
     
     func navigationController(navigationController: UINavigationController!, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController!, toViewController toVC: UIViewController!) -> UIViewControllerAnimatedTransitioning! {

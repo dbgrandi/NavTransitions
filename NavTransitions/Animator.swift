@@ -16,7 +16,7 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
     /**
      * When the transition is not interactive, set the animation to 0.3 seconds.
      */
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning!) -> NSTimeInterval {
+    func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
         return 0.3
     }
 
@@ -31,10 +31,10 @@ class Animator: NSObject, UIViewControllerAnimatedTransitioning {
      * See http://johansorensen.com/articles/pausing%20and%20controlling%20the%20speed%20of%20Core%20Animation.html
      *
      */
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning!) {
+    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
         let toViewController =
-            transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
-        let fromViewController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)
+            transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
+        let fromViewController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
 
         // Pull our custom navController to fade in/out the navButton
         let dbgNav = toViewController.navigationController as DBGNavigationController
