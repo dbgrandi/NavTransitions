@@ -21,6 +21,6 @@ class DBGViewController: UIViewController {
     
     func tap(sender: UITapGestureRecognizer) {
         let vc = DBGViewController()
-        self.navigationController.pushViewController(vc, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
